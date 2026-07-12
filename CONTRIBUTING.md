@@ -5,10 +5,12 @@ source of truth. Every implementation must reproduce every decode vector's bytes
 exactly and raise every error vector's exact code. If they disagree, something is
 wrong — and CI won't let it merge.
 
+The normative format spec is maintained separately; `vectors/` is its executable
+form and what every implementation is tested against.
+
 ## Layout
 
 ```
-SPEC.md            the frozen v1 format (normative)
 vectors/           the executable spec — decode/encode/error/differential cases
 generator/         builds vectors/ deterministically (extend it, don't hand-edit)
 conformance/       cross-language runners (run_all.sh, run.py) + CAVEATS.md
@@ -41,8 +43,8 @@ Per language:
 
 - **One file, no runtime deps** per codec (Rust's `miniz_oxide` is the single
   sanctioned exception — never hand-roll DEFLATE).
-- **Match the spec's ordered checks** (SPEC.md §4) exactly, so every bad input
-  maps to one deterministic error code.
+- **Match the spec's ordered checks** exactly, so every bad input maps to one
+  deterministic error code (mirror the Python reference in `python/ba64.py`).
 - **The wire format is frozen.** v1 never changes; new capability only ever comes
   through new method IDs in a future spec revision.
 - **A bug becomes a permanent test.** Fix it, then add the minimized input to
