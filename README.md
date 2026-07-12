@@ -76,54 +76,134 @@ dependencies.
 
 ## Use
 
-Python:
+Every version has the same shape. `encode` takes bytes and returns text. `decode`
+takes text and returns the original bytes. Errors carry a `code` you can branch
+on. `decode` also takes an optional size limit (default 64 MiB) that guards
+against decompression bombs.
+
+**Python**
 
 ```python
 import ba64
 
-text = ba64.encode(b'{"user":"alice","role":"admin"}')  # a string
-data = ba64.decode(text)                                 # the original bytes
+text = ba64.encode(b"hello world")   # a string
+data = ba64.decode(text)             # the original bytes
 
 try:
-    ba64.decode(value_from_untrusted_source)
+    ba64.decode(untrusted)
 except ba64.Ba64Error as e:
-    print(e.code)   # for example "E_CHECKSUM". Never a wrong result.
+    print(e.code)                    # for example "E_CHECKSUM"
 ```
 
-TypeScript / Node:
+**TypeScript / Node**
 
 ```ts
-import { encode, decode } from "ba64";
+import { encode, decode, Ba64Error } from "ba64";
 
-const text = encode(new TextEncoder().encode("hello"));  // a string
-const data = decode(text);                                // a Uint8Array
+const text = encode(new TextEncoder().encode("hello world"));  // a string
+const data = decode(text);                                      // a Uint8Array
+
+try {
+  decode(untrusted);
+} catch (e) {
+  if (e instanceof Ba64Error) console.log(e.code);              // "E_CHECKSUM"
+}
 ```
 
-<details>
-<summary><b>Go, Rust, Java, C#</b></summary>
+**Go**
 
 ```go
-text := ba64.Encode(data)       // string
-out, err := ba64.Decode(text)   // []byte, error
+text := ba64.Encode([]byte("hello world"))   // string
+data, err := ba64.Decode(text)               // []byte, error
+if err != nil {
+    code := err.(*ba64.Error).Code()         // for example "E_CHECKSUM"
+}
 ```
-```rust
-let text = ba64::encode(data);   // String
-let out  = ba64::decode(&text)?; // Vec<u8>
-```
-```java
-String text = Ba64.encode(data);  // String
-byte[] out  = Ba64.decode(text);  // throws Ba64.Ba64Exception
-```
-```csharp
-string text = Ba64.Encode(data);  // string
-byte[] out  = Ba64.Decode(text);  // throws Ba64.Ba64Exception
-```
-</details>
 
-Every version has the same shape. `encode` takes bytes and returns text. `decode`
-takes text and returns bytes. Errors carry a machine-readable `code`. `decode`
-also takes an optional size limit (default 64 MiB) that protects you from
-decompression bombs.
+**Rust**
+
+```rust
+let text = ba64::encode(b"hello world");   // String
+let data = ba64::decode(&text).unwrap();   // Vec<u8>
+
+match ba64::decode(untrusted) {
+    Ok(bytes) => { /* use bytes */ }
+    Err(e) => eprintln!("{}", e.code()),   // for example "E_CHECKSUM"
+}
+```
+
+**Java**
+
+```java
+String text = Ba64.encode("hello world".getBytes());  // String
+byte[] data = Ba64.decode(text);                       // byte[]
+
+try {
+    Ba64.decode(untrusted);
+} catch (Ba64.Ba64Exception e) {
+    System.out.println(e.code());                      // "E_CHECKSUM"
+}
+```
+
+**C#**
+
+```csharp
+string text = Ba64.Encode(Encoding.UTF8.GetBytes("hello world"));  // string
+byte[] data = Ba64.Decode(text);                                    // byte[]
+
+try {
+    Ba64.Decode(untrusted);
+} catch (Ba64.Ba64Exception e) {
+    Console.WriteLine(e.Code);                                      // "E_CHECKSUM"
+}
+```
+
+## Encode a file
+
+ba64 works on bytes, so encoding a file is just reading it, encoding, and writing
+the text. Decoding reverses it back to the exact original file.
+
+**Command line** (the Python CLI reads stdin, writes stdout):
+
+```sh
+python python/cli.py encode < photo.jpg  > photo.ba64
+python python/cli.py decode < photo.ba64 > photo.out.jpg
+# photo.out.jpg is byte for byte the same as photo.jpg
+```
+
+**Python**
+
+```python
+import ba64, pathlib
+
+raw = pathlib.Path("photo.jpg").read_bytes()
+pathlib.Path("photo.ba64").write_text(ba64.encode(raw))
+
+back = ba64.decode(pathlib.Path("photo.ba64").read_text())
+assert back == raw
+```
+
+**Go**
+
+```go
+raw, _ := os.ReadFile("photo.jpg")
+os.WriteFile("photo.ba64", []byte(ba64.Encode(raw)), 0644)
+
+text, _ := os.ReadFile("photo.ba64")
+back, _ := ba64.Decode(string(text))   // back == raw
+```
+
+**Node**
+
+```ts
+import { readFileSync, writeFileSync } from "node:fs";
+import { encode, decode } from "ba64";
+
+const raw = readFileSync("photo.jpg");
+writeFileSync("photo.ba64", encode(new Uint8Array(raw)));
+
+const back = decode(readFileSync("photo.ba64", "utf8"));   // back equals raw
+```
 
 ## One rule to remember
 
