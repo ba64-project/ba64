@@ -1,0 +1,37 @@
+name: nightly-fuzz
+
+# Phase 5: long fuzz runs per language, seeded from the shared fuzz-corpus/.
+# Any finding is minimized and — once fixed — promoted into vectors/ so it
+# regression-tests all six implementations forever (the permanent-corpus rule).
+# Go's native fuzzer and Python's atheris run here; the others (jazzer.js,
+# cargo-fuzz, Jazzer, SharpFuzz) attach as their runners are provisioned.
+
+on:
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+
+jobs:
+  go-native:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with: { go-version: "1.22" }
+      - name: Fuzz decode (no-crash / no-silent-corruption)
+        run: cd go && go test -run=x -fuzz=FuzzDecode -fuzztime=30m
+      - name: Fuzz roundtrip
+        run: cd go && go test -run=x -fuzz=FuzzRoundtrip -fuzztime=30m
+
+  python-atheris:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }   # atheris supports <=3.12
+      - run: pip install atheris
+      - name: Seed corpus and fuzz decode
+        run: |
+          python python/fuzz/seed_corpus.py fuzz-corpus
+          python python/fuzz/fuzz_decode.py fuzz-corpus/ -max_total_time=1800
+          python python/fuzz/fuzz_roundtrip.py -max_total_time=1800

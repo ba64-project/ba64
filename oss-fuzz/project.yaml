@@ -1,0 +1,12 @@
+homepage: "https://github.com/ba64-project/ba64"
+main_repo: "https://github.com/ba64-project/ba64"
+language: python
+primary_contact: "security@ba64.example"
+fuzzing_engines:
+  - libfuzzer
+sanitizers:
+  - address
+  - undefined
+# The Rust harnesses (rust/, via cargo-fuzz) attach as a second OSS-Fuzz project
+# with language: rust once the Python project is accepted — same program that
+# SQLite and zlib sit in.

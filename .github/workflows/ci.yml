@@ -1,0 +1,34 @@
+name: ci
+
+# Phase 0-1 gate: the conformance corpus regenerates deterministically and every
+# vector passes against the reference codec. Per-language unit/property/coverage
+# jobs join here in Phase 2+.
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  vectors:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Corpus is deterministic and up to date, and all vectors pass
+        run: make verify
+
+  python-reference:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install test tooling
+        run: pip install pytest hypothesis coverage mutmut
+      - name: 100% branch coverage on ba64.py + full suite (incl. slow ITs)
+        run: make py-gate
+      - name: Mutation gate (>=95% killed; survivors documented in MUTANTS.md)
+        run: make py-mutation

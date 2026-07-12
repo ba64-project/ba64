@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ba64"
+version = "1.0.0"
+description = "Binary-to-text encoding that is never larger than standard base64"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+keywords = ["base64", "compression", "encoding", "deflate", "codec"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Software Development :: Libraries",
+]
+
+[project.scripts]
+ba64 = "cli:main"
+
+[tool.setuptools]
+py-modules = ["ba64", "cli"]
+
+[tool.mutmut]
+paths_to_mutate = ["ba64.py"]
+tests_dir = ["tests/"]

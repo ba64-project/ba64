@@ -1,0 +1,21 @@
+{
+  "name": "ba64",
+  "version": "1.0.0",
+  "description": "Binary-to-text encoding that is never larger than standard base64",
+  "type": "module",
+  "exports": {
+    ".": "./ba64.ts"
+  },
+  "types": "./ba64.ts",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node --test",
+    "conformance": "node conformance.ts",
+    "coverage": "node --test --experimental-test-coverage"
+  },
+  "keywords": ["base64", "compression", "encoding", "deflate", "codec"],
+  "license": "MIT",
+  "files": ["ba64.ts", "README.md"]
+}

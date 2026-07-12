@@ -1,0 +1,20 @@
+<!-- NuGet library package for the ba64 codec. Packs only Ba64.cs (the test
+     runner and harness live in ../ba64.csproj and are not published). -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+
+    <PackageId>Ba64</PackageId>
+    <Version>1.0.0</Version>
+    <Description>Binary-to-text encoding that is never larger than standard base64</Description>
+    <Packagelicense>MIT</Packagelicense>
+    <PackageTags>base64;compression;encoding;deflate;codec</PackageTags>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="../Ba64.cs" />
+  </ItemGroup>
+</Project>

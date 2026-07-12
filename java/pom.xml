@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Maven Central packaging for the single-file ba64 codec. Ba64Test.java and
+     Harness.java are excluded from the published artifact. -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>io.ba64</groupId>
+  <artifactId>ba64</artifactId>
+  <version>1.0.0</version>
+  <packaging>jar</packaging>
+
+  <name>ba64</name>
+  <description>Binary-to-text encoding that is never larger than standard base64</description>
+
+  <licenses>
+    <license><name>MIT</name></license>
+  </licenses>
+
+  <properties>
+    <maven.compiler.release>17</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <build>
+    <sourceDirectory>${project.basedir}</sourceDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <includes><include>Ba64.java</include></includes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

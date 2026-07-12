@@ -1,0 +1,159 @@
+{
+  "about": "each input maps to exactly one taxonomy code (SPEC 4, 5). Fuzzer findings are minimized and promoted here permanently.",
+  "cases": [
+    {
+      "name": "marker_only",
+      "input": "=",
+      "error": "E_TRUNCATED"
+    },
+    {
+      "name": "double_marker",
+      "input": "==",
+      "error": "E_BASE64"
+    },
+    {
+      "name": "missing_padding",
+      "input": "SGVsbG8",
+      "error": "E_BASE64"
+    },
+    {
+      "name": "nonzero_trailing_bits",
+      "input": "QR==",
+      "error": "E_BASE64"
+    },
+    {
+      "name": "embedded_space",
+      "input": "SGVs bG8=",
+      "error": "E_BASE64"
+    },
+    {
+      "name": "urlsafe_alphabet",
+      "input": "-_-_",
+      "error": "E_BASE64"
+    },
+    {
+      "name": "frame_body_garbage",
+      "input": "=@@@@",
+      "error": "E_BASE64"
+    },
+    {
+      "name": "non_ascii",
+      "input": "SGVsbG8=\u00e9",
+      "error": "E_BASE64"
+    },
+    {
+      "name": "truncated_header_0b",
+      "input": "=",
+      "error": "E_TRUNCATED"
+    },
+    {
+      "name": "truncated_header_1b",
+      "input": "=AQ==",
+      "error": "E_TRUNCATED"
+    },
+    {
+      "name": "truncated_header_2b",
+      "input": "=AQE=",
+      "error": "E_TRUNCATED"
+    },
+    {
+      "name": "truncated_mid_varint",
+      "input": "=AQHI",
+      "error": "E_TRUNCATED"
+    },
+    {
+      "name": "truncated_partial_crc",
+      "input": "=AQECDg4=",
+      "error": "E_TRUNCATED"
+    },
+    {
+      "name": "bad_version_2",
+      "input": "=AgECDg4XTQECAP3/SGk=",
+      "error": "E_VERSION"
+    },
+    {
+      "name": "bad_version_ff",
+      "input": "=/wECDg4XTQECAP3/SGk=",
+      "error": "E_VERSION"
+    },
+    {
+      "name": "reserved_method_02",
+      "input": "=AQICDg4XTQECAP3/SGk=",
+      "error": "E_METHOD"
+    },
+    {
+      "name": "reserved_method_ef",
+      "input": "=Ae8CDg4XTQECAP3/SGk=",
+      "error": "E_METHOD"
+    },
+    {
+      "name": "private_method_f0",
+      "input": "=AfACDg4XTQECAP3/SGk=",
+      "error": "E_METHOD"
+    },
+    {
+      "name": "method_zero",
+      "input": "=AQACDg4XTQECAP3/SGk=",
+      "error": "E_METHOD"
+    },
+    {
+      "name": "leb128_non_minimal",
+      "input": "=AQGAAAAAAAA=",
+      "error": "E_HEADER"
+    },
+    {
+      "name": "leb128_too_long",
+      "input": "=AQGAgICAgICAgICAAAAAAA==",
+      "error": "E_HEADER"
+    },
+    {
+      "name": "over_limit_8gib",
+      "input": "=AQGAgICAIAAAAAA=",
+      "error": "E_LIMIT_EXCEEDED"
+    },
+    {
+      "name": "over_limit_1tb",
+      "input": "=AQGAoJSljR0AAAAA",
+      "error": "E_LIMIT_EXCEEDED"
+    },
+    {
+      "name": "payload_malformed",
+      "input": "=AQEEAAAAAN6tvu8=",
+      "error": "E_PAYLOAD"
+    },
+    {
+      "name": "payload_truncated_stream",
+      "input": "=AQEFgonR9wEFAPr/SGVs",
+      "error": "E_PAYLOAD",
+      "error_alt": [
+        "E_LENGTH_MISMATCH"
+      ],
+      "note": "truncated DEFLATE stream: zlib/flate/miniz_oxide raise E_PAYLOAD; .NET's DeflateStream treats premature EOF as end-of-stream and reports E_LENGTH_MISMATCH. Decoder-dependent \u2014 see conformance/CAVEATS.md."
+    },
+    {
+      "name": "payload_trailing_bytes",
+      "input": "=AQECDg4XTQECAP3/SGkA",
+      "error": "E_PAYLOAD"
+    },
+    {
+      "name": "len_claim_low",
+      "input": "=AQEBDg4XTQECAP3/SGk=",
+      "error": "E_LENGTH_MISMATCH"
+    },
+    {
+      "name": "len_claim_high",
+      "input": "=AQECSzaytwEBAP7/WA==",
+      "error": "E_LENGTH_MISMATCH"
+    },
+    {
+      "name": "golden_zero_cap_trap",
+      "input": "=AQEAAAAAAAEBAP7/WA==",
+      "error": "E_LENGTH_MISMATCH"
+    },
+    {
+      "name": "bad_crc",
+      "input": "=AQEC776t3gECAP3/SGk=",
+      "error": "E_CHECKSUM"
+    }
+  ]
+}

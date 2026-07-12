@@ -1,0 +1,32 @@
+name: cross-conformance
+
+# Phase 4: every implementation runs against the one shared corpus (including the
+# 4000-case differential vs the Python reference). A bug has to survive six
+# independent reviews-by-machine to ship. The full 6x6 encoder/decoder matrix
+# (every encoder's output decoded by every decoder) is the Phase 5 extension.
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  six-languages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+      - uses: actions/setup-go@v5
+        with: { go-version: "1.22" }
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/setup-java@v4
+        with: { distribution: "temurin", java-version: "21" }
+      - uses: actions/setup-dotnet@v4
+        with: { dotnet-version: "8.0" }
+      - name: All six implementations agree on the shared corpus
+        run: bash conformance/run_all.sh
+      - name: 6x6 encoder/decoder matrix over 10k seeded inputs
+        run: python3 conformance/run.py

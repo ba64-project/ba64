@@ -1,0 +1,22 @@
+[package]
+name = "ba64"
+version = "1.0.0"
+edition = "2021"
+description = "Binary-to-text encoding that is never larger than standard base64"
+license = "MIT"
+readme = "README.md"
+keywords = ["base64", "compression", "encoding", "deflate", "codec"]
+categories = ["encoding", "compression"]
+repository = "https://github.com/ba64-project/ba64"
+
+[lib]
+path = "src/lib.rs"
+
+# The single sanctioned runtime dependency (spec §3): never hand-roll inflate.
+# base64 and CRC-32 are hand-rolled to keep the runtime dependency surface to one.
+[dependencies]
+miniz_oxide = "0.8"
+
+[dev-dependencies]
+serde_json = "1"
+proptest = "1"

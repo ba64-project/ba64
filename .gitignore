@@ -1,0 +1,28 @@
+__pycache__/
+*.pyc
+vectors/.backup/
+vectors/.SHA256SUMS.prev
+.venv/
+.coverage
+htmlcov/
+mutants/
+.mutmut-cache
+mutmut-stats.json
+.pytest_cache/
+.hypothesis/
+rust/target/
+csharp/bin/
+csharp/obj/
+java/*.class
+node_modules/
+fuzz-corpus/*
+!fuzz-corpus/README.md
+
+# meta/tooling (kept local, not part of the product monorepo)
+.claude/
+code-writing.md
+code-review.md
+
+# excluded from the product repo by request (published separately)
+spec.md
+draft/
